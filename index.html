@@ -49,7 +49,7 @@ body{padding:14px 12px calc(28px + env(safe-area-inset-bottom));max-width:560px;
 @keyframes r{to{transform:rotate(360deg)}}
 svg text{font-family:inherit}
 .tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;background:var(--bg);padding:8px 0 10px;margin:0 0 4px}
-.tabs button{flex:1;border:0;border-radius:999px;padding:9px 0;font-size:14px;font-weight:900;background:var(--card);color:var(--sub);font-family:inherit}
+.tabs button{flex:1;min-width:0;border:0;border-radius:999px;padding:9px 0;font-size:14px;font-weight:900;background:var(--card);color:var(--sub);font-family:inherit}
 .tabs button.on{background:var(--acc);color:#fffaf3}
 .rows{list-style:none;margin:0;padding:0;font-size:14px}
 .rows li{padding:7px 0;border-top:1px solid var(--line);line-height:1.5}
@@ -157,6 +157,22 @@ function chronTab(D) {
   h += '<div class="card"><h2>出来事(新しい順)</h2>' + (D.chron.length ? '<ul class="chron">' + D.chron.map(function (x) { return '<li><span class="a">' + esc(x.a) + '</span><span>' + esc(x.t) + '</span></li>'; }).join('') + '</ul>' : '<div class="muted" style="font-size:14px">まだありません</div>') + '</div>';
   return h;
 }
+function loveTab(D) {
+  var V = D.love || {}, h = '';
+  h += '<div class="card"><h2>モテ度(同い年のなかでの偏差値)</h2><div class="big">' + (V.mote || '—') + '</div><div class="delta muted">見た目 ' + esc(V.look) + '・面白さ ' + esc(V.fun) + '</div></div>';
+  if (!V.pov) h += '<div class="card"><div class="muted" style="font-size:14px;line-height:1.7">恋愛の分岐点は、中学から(あなたが本人として答える時期)に出てきます。</div></div>';
+  var N = V.now;
+  if (N) {
+    h += '<div class="card"><h2>いまの相手</h2><div style="font-size:22px;font-weight:900">' + esc(N.name) + ' <span class="muted" style="font-size:13px">' + esc(N.rel) + '・' + (N.months >= 12 ? Math.floor(N.months / 12) + '年' + (N.months % 12 ? N.months % 12 + 'か月' : '') : N.months + 'か月') + '</span></div>';
+    h += '<div class="row"><div class="top"><span>あなたへの気持ち</span><b style="color:var(--acc)">' + N.like + '</b></div><div class="track"><i style="width:' + N.like + '%;background:var(--acc)"></i></div></div>';
+    h += '<dl class="facts" style="margin-top:12px"><dt>人柄</dt><dd>' + esc(N.per) + '</dd><dt>背景</dt><dd>' + esc(N.bg) + '</dd><dt>結婚したい気持ち</dt><dd>' + esc(N.wm) + '</dd><dt>子どもがほしい気持ち</dt><dd>' + esc(N.wk) + '</dd><dt>嫉妬・束縛</dt><dd>' + esc(N.jl) + '</dd>' + (N.married ? '<dt>結婚</dt><dd>' + esc(N.mAge) + '</dd>' : '') + (N.kid ? '<dt>子ども</dt><dd>' + esc(N.kid) + '</dd>' : '') + '</dl>';
+    h += '<div class="why" style="display:block;margin-top:8px">関係の深さ ' + V.q + '</div></div>';
+  } else if (V.pov) h += '<div class="card"><h2>いまの相手</h2><div class="muted" style="font-size:14px">いまは恋人がいません</div></div>';
+  if ((V.crush || []).length) h += '<div class="card"><h2>気になる人</h2><ul class="rows">' + V.crush.map(function (c) { return '<li><span class="n">' + esc(c.name) + '</span> <span class="s">' + esc(c.role) + '・気持ち ' + c.like + '</span></li>'; }).join('') + '</ul></div>';
+  h += '<div class="card"><h2>これまでの恋(付き合った人 ' + (V.count || 0) + '人)</h2>' + ((V.exes || []).length ? '<ul class="rows">' + V.exes.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('') + '</ul>' : '<div class="muted" style="font-size:14px">別れた相手はいません</div>') + '</div>';
+  if ((V.log || []).length) h += '<div class="card"><h2>恋愛の分岐点(新しい順)</h2><ul class="tl">' + V.log.map(function (x) { return '<li><span class="age">' + x.a.toFixed(1) + '歳</span><span class="t">' + esc(x.t) + '</span><div class="br">' + esc(x.br) + '</div>' + (x.mot ? '<div class="mot">理由: ' + esc(x.mot) + '</div>' : '') + (x.conv ? '<div class="mot"><span class="stars">' + stars(x.conv) + '</span></div>' : '') + '</li>'; }).join('') + '</ul></div>';
+  return h;
+}
 function cvTab(D) {
   var P = D.pf || {}, H = P.head || {}, C = P.cv || {}, h = '';
   h += '<div class="card"><h2>基本</h2><dl class="facts"><dt>生まれ</dt><dd>' + esc(H.born) + '・' + esc(H.sex) + '</dd><dt>育ち</dt><dd>' + esc(H.place) + '</dd><dt>家族</dt><dd>' + esc(H.fam) + '</dd><dt>いま</dt><dd>' + esc(H.now) + '</dd></dl></div>';
@@ -181,7 +197,7 @@ function helpTab(D) {
   h += '<p>小学校まではあなたが親として答えます。中学からは本人として答え、親が決めることだけ「(親として)」と書いて聞きます。</p>';
   h += '<p>受験や進学先など、決まった選択肢から選ぶ場面では、カードのボタンを押してください。</p>';
   h += '<p>30歳になったら終わりです。そのときの年収と、そこに効いたことがわかります。</p></div>';
-  h += '<div class="card help"><h2>この画面</h2><p><b>盤面</b>… 30歳の年収の見込み、能力、たまっているもの、分岐点の記録、家の方針<br><b>年表</b>… 1年ごとのまとめと、出来事<br><b>履歴書</b>… 学歴・職歴・能力と、それをつくった環境</p></div>';
+  h += '<div class="card help"><h2>この画面</h2><p><b>盤面</b>… 収入、富・名声・力、30歳の年収の見込み、能力、たまっているもの、分岐点の記録、家の方針<br><b>年表</b>… 1年ごとのまとめと、出来事<br><b>恋愛</b>… モテ度、いまの相手、これまでの恋、恋愛の分岐点<br><b>履歴書</b>… 学歴・職歴・能力と、それをつくった環境</p></div>';
   h += '<div class="card help"><h2>やり直す・新しい人生</h2><p><b>同じ人をやり直す</b>… メニュー左の「中学生から」「高校生から」「大学生から」。その学校に入ったときに戻り、そこから先を別の未来として生き直します。過去は同じです。</p><p><b>新しい人生</b>… メニュー下の「新しい人生をはじめる」。別の家庭・別の人で、誕生・小学校・中学校・高校・大学のどこからでも始められます。いまの人と、やり直し用の記録は消えます。</p><p>どちらも、押したあとに確認が出ます。</p>';
   h += '</div>';
   return h;
@@ -192,13 +208,13 @@ function startCmd(t, risky) {
 }
 function alertBox(t) { var d = document.createElement('div'); d.className = 'msg'; d.textContent = t; $app.appendChild(d); }
 var TAB = (location.search.match(/[?&]tab=(\w+)/) || [])[1] || 'board', DATA = null;
-var TABS = [['board', '盤面'], ['chron', '年表'], ['cv', '履歴書'], ['help', '使い方']];
+var TABS = [['board', '盤面'], ['chron', '年表'], ['love', '恋愛'], ['cv', '履歴書'], ['help', '使い方']];
 function setTab(t) { TAB = t; ARM = ''; show(DATA); window.scrollTo(0, 0); }
 function render(D) {
   var h = '<div class="brand">確率AI「30年の箱庭」</div>';
   h += '<div class="head"><h1>' + esc(D.name) + '</h1><span class="meta">' + esc(D.age) + (D.grade ? '・' + esc(D.grade) : '') + '・' + esc(D.year) + '年</span></div>';
   h += '<div class="tabs">' + TABS.map(function (t) { return '<button class="' + (TAB === t[0] ? 'on' : '') + '" onclick="setTab(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('') + '</div>';
-  h += TAB === 'chron' ? chronTab(D) : TAB === 'cv' ? cvTab(D) : TAB === 'help' ? helpTab(D) : board(D);
+  h += TAB === 'chron' ? chronTab(D) : TAB === 'love' ? loveTab(D) : TAB === 'cv' ? cvTab(D) : TAB === 'help' ? helpTab(D) : board(D);
   h += '<button class="btn" onclick="closeApp()">LINE にもどる</button>';
   $app.innerHTML = h;
 }
