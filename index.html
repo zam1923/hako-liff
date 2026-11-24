@@ -163,13 +163,18 @@ function loveTab(D) {
   if (!V.pov) h += '<div class="card"><div class="muted" style="font-size:14px;line-height:1.7">恋愛の分岐点は、中学から(あなたが本人として答える時期)に出てきます。</div></div>';
   var N = V.now;
   if (N) {
-    h += '<div class="card"><h2>いまの相手</h2><div style="font-size:22px;font-weight:900">' + esc(N.name) + ' <span class="muted" style="font-size:13px">' + esc(N.rel) + '・' + (N.months >= 12 ? Math.floor(N.months / 12) + '年' + (N.months % 12 ? N.months % 12 + 'か月' : '') : N.months + 'か月') + '</span></div>';
+    h += '<div class="card"><h2>' + (N.married ? '結婚相手' : 'いまの交際相手') + '</h2><div style="font-size:22px;font-weight:900">' + esc(N.name) + ' <span class="muted" style="font-size:13px">' + esc(N.rel) + '・' + (N.months >= 12 ? Math.floor(N.months / 12) + '年' + (N.months % 12 ? N.months % 12 + 'か月' : '') : N.months + 'か月') + '</span></div>';
     h += '<div class="row"><div class="top"><span>あなたへの気持ち</span><b style="color:var(--acc)">' + N.like + '</b></div><div class="track"><i style="width:' + N.like + '%;background:var(--acc)"></i></div></div>';
-    h += '<dl class="facts" style="margin-top:12px"><dt>人柄</dt><dd>' + esc(N.per) + '</dd><dt>背景</dt><dd>' + esc(N.bg) + '</dd><dt>結婚したい気持ち</dt><dd>' + esc(N.wm) + '</dd><dt>子どもがほしい気持ち</dt><dd>' + esc(N.wk) + '</dd><dt>嫉妬・束縛</dt><dd>' + esc(N.jl) + '</dd>' + (N.married ? '<dt>結婚</dt><dd>' + esc(N.mAge) + '</dd>' : '') + (N.kid ? '<dt>子ども</dt><dd>' + esc(N.kid) + '</dd>' : '') + '</dl>';
+    h += '<dl class="facts" style="margin-top:12px">' + (N.from ? '<dt>付き合いはじめ</dt><dd>' + esc(N.from) + '</dd>' : '') + '<dt>人柄</dt><dd>' + esc(N.per) + '</dd><dt>背景</dt><dd>' + esc(N.bg) + '</dd><dt>結婚したい気持ち</dt><dd>' + esc(N.wm) + '</dd><dt>子どもがほしい気持ち</dt><dd>' + esc(N.wk) + '</dd><dt>嫉妬・束縛</dt><dd>' + esc(N.jl) + '</dd>' + (N.married ? '<dt>結婚</dt><dd>' + esc(N.mAge) + '</dd>' : '') + (N.kid ? '<dt>子ども</dt><dd>' + esc(N.kid) + '</dd>' : '') + '</dl>';
     h += '<div class="why" style="display:block;margin-top:8px">関係の深さ ' + V.q + '</div></div>';
-  } else if (V.pov) h += '<div class="card"><h2>いまの相手</h2><div class="muted" style="font-size:14px">いまは恋人がいません</div></div>';
+  } else if (V.pov) h += '<div class="card"><h2>いまの交際相手・結婚相手</h2><div class="muted" style="font-size:14px">いまは恋人がいません</div></div>';
   if ((V.crush || []).length) h += '<div class="card"><h2>気になる人</h2><ul class="rows">' + V.crush.map(function (c) { return '<li><span class="n">' + esc(c.name) + '</span> <span class="s">' + esc(c.role) + '・気持ち ' + c.like + '</span></li>'; }).join('') + '</ul></div>';
-  h += '<div class="card"><h2>これまでの恋(付き合った人 ' + (V.count || 0) + '人)</h2>' + ((V.exes || []).length ? '<ul class="rows">' + V.exes.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('') + '</ul>' : '<div class="muted" style="font-size:14px">別れた相手はいません</div>') + '</div>';
+  var P = V.past || [];
+  h += '<div class="card"><h2>過去の交際相手・結婚相手(付き合った人 ' + (V.count || 0) + '人)</h2>';
+  if (P.length) h += '<ul class="rows">' + P.map(function (e) { return '<li><span class="n">' + esc(e.name) + '</span> <span class="s">' + esc(e.kind) + '</span><div class="muted" style="font-size:13px;margin-top:2px">' + esc(e.from) + '〜' + esc(e.to) + '(' + esc(e.len) + ')' + (e.mar ? '・' + esc(e.mar) + 'で結婚' : '') + '・' + esc(e.end) + '</div></li>'; }).join('') + '</ul>';
+  else if ((V.exes || []).length) h += '<ul class="rows">' + V.exes.map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('') + '</ul>';
+  else h += '<div class="muted" style="font-size:14px">まだいません</div>';
+  h += '</div>';
   if ((V.log || []).length) h += '<div class="card"><h2>恋愛の分岐点(新しい順)</h2><ul class="tl">' + V.log.map(function (x) { return '<li><span class="age">' + x.a.toFixed(1) + '歳</span><span class="t">' + esc(x.t) + '</span><div class="br">' + esc(x.br) + '</div>' + (x.mot ? '<div class="mot">理由: ' + esc(x.mot) + '</div>' : '') + (x.conv ? '<div class="mot"><span class="stars">' + stars(x.conv) + '</span></div>' : '') + '</li>'; }).join('') + '</ul></div>';
   return h;
 }
