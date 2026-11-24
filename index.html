@@ -58,6 +58,41 @@ svg text{font-family:inherit}
 .help p{font-size:14px;line-height:1.75;margin:0 0 10px}
 .btn2{display:block;width:100%;border:2px solid var(--acc);border-radius:14px;padding:12px;font-size:15px;font-weight:900;background:transparent;color:var(--acc);margin-top:8px;font-family:inherit}
 .btn2.warn{background:var(--acc);color:#fffaf3}
+
+/* ---- ミニゲーム ---- */
+html.mg{background:var(--bg)}
+.mg{--acc:#e8875a}
+.mg.g-match{--acc:#ff5a7a;--bg:#fff0f3;--card:#fff;--line:#ffd6de;--track:#ffe3e9}
+.mg.g-party{--acc:#d4507a;--bg:#fbeef3;--card:#fff;--line:#f3d0dc;--track:#f8dfe8}
+.mg.g-taikai{--acc:#2f8f5b;--bg:#e9f5ec;--card:#fff;--line:#cfe8d7;--track:#d9efe0}
+.mg.g-shukatsu{--acc:#2c4f8a;--bg:#eef2f8;--card:#fff;--line:#d6dfee;--track:#dfe6f2}
+.mg.g-tenshoku{--acc:#1f7ac2;--bg:#ecf5fc;--card:#fff;--line:#cfe3f3;--track:#d9eaf7}
+.mg.g-room{--acc:#178a86;--bg:#e8f5f4;--card:#fff;--line:#cbe6e4;--track:#d5eceb}
+.mg.g-shutsugan{--acc:#4b47b5;--bg:#efeefa;--card:#fff;--line:#dcdaf3;--track:#e3e2f6}
+.mgt{font-size:22px;font-weight:900;margin:2px 4px 8px}
+.mgi{font-size:13px;color:var(--sub);font-weight:700;margin:0 4px 10px;line-height:1.6}
+.swp{position:relative;background:var(--card);border-radius:22px;padding:22px 18px;box-shadow:0 6px 18px rgba(0,0,0,.08);margin:6px 0 14px;touch-action:pan-y;transition:transform .2s}
+.swp .ph{height:150px;border-radius:16px;background:linear-gradient(135deg,var(--track),var(--line));display:flex;align-items:center;justify-content:center;font-size:54px;font-weight:900;color:var(--acc);margin-bottom:12px}
+.swp .nm{font-size:22px;font-weight:900}.swp .ln{font-size:14px;margin-top:4px;line-height:1.55}.swp .q{font-size:14px;color:var(--sub);margin-top:8px}
+.swp .badge{position:absolute;top:30px;right:30px;background:var(--acc);color:#fff;font-weight:900;font-size:12px;padding:4px 10px;border-radius:999px}
+.stamp{position:absolute;top:40px;font-size:30px;font-weight:900;border:4px solid;border-radius:10px;padding:2px 10px;opacity:0;transform:rotate(-12deg)}
+.stamp.l{left:24px;color:#3a9d6a}.stamp.r{right:24px;color:#999}
+.ch{display:flex;gap:10px}.ch .btn{margin:0}.ch .btn.no{background:#bbb}
+.cbtn{display:block;width:100%;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:14px;padding:12px 14px;margin:0 0 8px;font-family:inherit;color:var(--ink)}
+.cbtn b{font-size:15px}.cbtn span{display:block;font-size:12px;color:var(--sub);margin-top:3px}
+.cbtn:active{border-color:var(--acc)}
+.mgc{position:relative;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px 14px;margin:0 0 8px}
+.mgc.sel{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset}
+.mgc.off{opacity:.45}
+.mgc .nm{font-size:16px;font-weight:900;padding-right:70px}.mgc .ln{font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.5}
+.mgc .tag{position:absolute;top:12px;right:12px;font-size:11px;font-weight:900;color:var(--acc)}
+.mgc .no{position:absolute;bottom:10px;right:12px;width:24px;height:24px;border-radius:12px;background:var(--acc);color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center}
+.bub{display:flex;gap:8px;margin:0 0 10px}.bub .w{font-size:11px;color:var(--sub);font-weight:800;white-space:nowrap;padding-top:8px}
+.bub .t{background:var(--card);border-radius:4px 16px 16px 16px;padding:10px 12px;font-size:14px;line-height:1.55;box-shadow:0 1px 0 var(--line)}
+.brk{list-style:none;margin:0 0 12px;padding:0}.brk li{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;font-size:13px;font-weight:700;background:var(--card);border-radius:10px;margin-bottom:4px}
+.brk li.now{border:2px solid var(--acc)}.brk li .r{color:var(--acc);font-weight:900;white-space:nowrap}
+.mglog{font-size:12px;color:var(--sub);margin:10px 4px 0;line-height:1.7}
+.res{text-align:center;padding:30px 10px}.res .k{font-size:13px;color:var(--acc);font-weight:900;letter-spacing:.1em}.res .h{font-size:24px;font-weight:900;margin:10px 0}.res .s{font-size:14px;color:var(--sub);line-height:1.7}
 </style>
 </head>
 <body>
@@ -198,9 +233,10 @@ var CAN_SEND = false, ARM = '';
 function helpTab(D) {
   var h = '<div class="card help"><h2>あそびかた</h2>';
   h += '<p>あなたは親として、そして中学からは本人として、ひとりの30年を生きます。家庭はくじ引きです。</p>';
-  h += '<p>トークに届く<b>分岐点</b>に、どうするか・なぜそうするかを自由に書いて送ってください。選択肢はありません。Jev が答えを読みとって、選んだ道と理由、本気度を決めます。答えが薄いときは、もう一歩だけ聞き返します。</p>';
+  h += '<p>トークに届く<b>分岐点</b>には、上司・同期・恋人など相手のいる場面で、返す言葉を自由に書いて送ってください。Jev が答えを読みとって、相手がどう出るかを決めます。それが評価や関係、次の場面につながります。</p>';
+  h += '<p>会社・相手・部活など、名前の入った<b>カード</b>が届いたら、ボタンで選んでください。</p>';
+  h += '<p>マッチングアプリ・婚活パーティー・部活の大会・出願・就活・転職サイト・部屋探しは<b>ミニゲーム</b>です。カードの「開く」で遊び、終わるとトークに戻って続きます。「飛ばす」で自動で決めることもできます。</p>';
   h += '<p>小学校まではあなたが親として答えます。中学からは本人として答え、親が決めることだけ「(親として)」と書いて聞きます。</p>';
-  h += '<p>受験や進学先など、決まった選択肢から選ぶ場面では、カードのボタンを押してください。</p>';
   h += '<p>30歳になったら終わりです。そのときの年収と、そこに効いたことがわかります。</p></div>';
   h += '<div class="card help"><h2>この画面</h2><p><b>盤面</b>… 収入、富・名声・力、30歳の年収の見込み、能力、たまっているもの、分岐点の記録、家の方針<br><b>年表</b>… 1年ごとのまとめと、出来事<br><b>恋愛</b>… モテ度、いまの相手、これまでの恋、恋愛の分岐点<br><b>履歴書</b>… 学歴・職歴・能力と、それをつくった環境</p></div>';
   h += '<div class="card help"><h2>やり直す・新しい人生</h2><p><b>同じ人をやり直す</b>… メニュー左の「中学生から」「高校生から」「大学生から」。その学校に入ったときに戻り、そこから先を別の未来として生き直します。過去は同じです。</p><p><b>新しい人生</b>… メニュー下の「新しい人生をはじめる」。別の家庭・別の人で、誕生・小学校・中学校・高校・大学のどこからでも始められます。いまの人と、やり直し用の記録は消えます。</p><p>どちらも、押したあとに確認が出ます。</p>';
@@ -212,6 +248,63 @@ function startCmd(t, risky) {
   liff.sendMessages([{ type: 'text', text: t }]).then(function () { liff.closeWindow(); }).catch(function (e) { ARM = ''; alertBox('送れませんでした: ' + (e && e.message || e)); });
 }
 function alertBox(t) { var d = document.createElement('div'); d.className = 'msg'; d.textContent = t; $app.appendChild(d); }
+
+// ---------- ミニゲーム ----------
+var MG = { tok: null, v: null, sel: [], busy: 0, one: null };
+function mgPost(act) {
+  if (MG.busy) return; MG.busy = 1; if (act) mgSpin();
+  return fetch(CONF.api + '?api=mg', { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idToken: MG.tok, act: act || null }) })
+    .then(function (r) { return r.json(); }).then(function (v) { MG.busy = 0; mgShow(v); }).catch(function (e) { MG.busy = 0; msg('通信できませんでした。もう一度ためしてください。', 1); });
+}
+function mgSpin() { var d = document.getElementById('mgwait'); if (d) d.style.display = 'block'; }
+function mgAct(a) { if (MG.demo) return; mgPost(a); }
+function mgShow(v) {
+  if (v.err === 'jev') { MG.busy = 0; alertBox('Jev から返事が来ませんでした。もう一度選んでください。'); mgShow(MG.v); return; }
+  if (v.err) return msg('いまは開けません(' + esc(v.err) + ')', 1);
+  MG.v = v; MG.sel = []; MG.one = null;
+  document.body.className = document.documentElement.className = 'mg g-' + (v.g || (v.res && v.res.id) || '');
+  if (v.none) {
+    var R = v.res;
+    if (!R) return msg('いま遊べるミニゲームはありません。<br>トークにもどってください。', 1);
+    $app.innerHTML = '<div class="res"><div class="k">' + esc(R.name) + ' ・ 結果</div><div class="h">' + esc(R.lines[0] || '') + '</div><div class="s">' + R.lines.slice(1).map(esc).join('<br>') + '</div></div><button class="btn" onclick="mgBack()">トークにもどって続ける</button>';
+    return;
+  }
+  var h = '<div class="brand">' + esc(v.name) + '</div><div class="mgt">' + esc(v.title || '') + '</div>';
+  if (v.info && v.info.length) h += '<div class="mgi">' + v.info.filter(Boolean).map(esc).join('<br>') + '</div>';
+  if (v.bracket) h += '<ul class="brk">' + v.bracket.map(function (b) { return '<li class="' + (b.st === 'いま' ? 'now' : '') + '"><span>' + esc(b.t) + '</span><span class="r">' + esc(b.st) + '</span></li>'; }).join('') + '</ul>';
+  if (v.progress) h += '<ul class="brk">' + v.progress.map(function (b) { return '<li><span>' + esc(b.t) + '</span><span class="r">' + esc(b.st) + '</span></li>'; }).join('') + '</ul>';
+  if (v.chat) h += v.chat.map(function (c) { return '<div class="bub"><div class="w">' + esc(c.who) + '</div><div class="t">' + esc(c.t) + '</div></div>'; }).join('');
+  if (v.swipe) { var S = v.swipe; h += '<div class="swp" id="swp"><div class="stamp l">LIKE</div><div class="stamp r">NOPE</div><div class="ph">' + esc((S.name || '').split(' ').pop().slice(0, 1)) + '</div>' + (S.look ? '<div class="badge">見た目 ' + S.look + '</div>' : '') + '<div class="nm">' + esc(S.name) + '</div>' + S.lines.map(function (l) { return '<div class="ln">' + esc(l) + '</div>'; }).join('') + (S.line ? '<div class="q">' + esc(S.line) + '</div>' : '') + '</div>'; }
+  if (v.cards) h += v.cards.map(function (c, j) { return '<div class="mgc' + (c.off ? ' off' : '') + '" id="mc' + j + '" onclick="mgTap(' + j + ')"><div class="nm">' + esc(c.name) + '</div>' + (c.tag ? '<div class="tag">' + esc(c.tag) + '</div>' : '') + (c.lines || []).filter(Boolean).map(function (l) { return '<div class="ln">' + esc(l) + '</div>'; }).join('') + '<div class="no" style="display:none"></div></div>'; }).join('');
+  if (v.multi || v.single) h += '<button class="btn" id="mgok" onclick="mgOk()" style="opacity:.4">' + (v.multi ? '選んで決定' : '決定') + '</button>';
+  if (v.choices && v.choices.length) {
+    if (v.swipe && v.choices.length === 2) h += '<div class="ch"><button class="btn no" onclick="mgCh(0)">' + esc(v.choices[0].label) + '</button><button class="btn" onclick="mgCh(1)">' + esc(v.choices[1].label) + '</button></div>';
+    else h += v.choices.map(function (c, j) { return '<button class="cbtn" onclick="mgCh(' + j + ')"><b>' + esc(c.label) + '</b>' + (c.sub ? '<span>' + esc(c.sub) + '</span>' : '') + '</button>'; }).join('');
+  }
+  if (v.log && v.log.length) h += '<div class="mglog">' + v.log.map(esc).join('<br>') + '</div>';
+  h += '<div id="mgwait" class="msg" style="display:none"><div class="spin"></div>Jev が判定しています…</div>';
+  $app.innerHTML = h; window.scrollTo(0, 0);
+  if (v.swipe) mgSwipe();
+}
+function mgCh(j) { var c = MG.v.choices[j]; mgAct({ a: c.a, k: c.k }); }
+function mgTap(j) {
+  var v = MG.v, c = v.cards[j]; if (c.off) return;
+  if (v.single) { MG.one = j; v.cards.forEach(function (x, i) { document.getElementById('mc' + i).classList.toggle('sel', i === j); }); }
+  else { var k = MG.sel.indexOf(j); if (k >= 0) MG.sel.splice(k, 1); else if (MG.sel.length < v.multi.max) MG.sel.push(j); v.cards.forEach(function (x, i) { var e = document.getElementById('mc' + i), n = MG.sel.indexOf(i); e.classList.toggle('sel', n >= 0); var b = e.querySelector('.no'); b.style.display = n >= 0 ? 'flex' : 'none'; b.textContent = n + 1; }); }
+  var ok = document.getElementById('mgok'); if (ok) { ok.style.opacity = (v.single ? MG.one !== null : MG.sel.length) ? 1 : .4; if (v.multi) ok.textContent = '選んで決定(' + MG.sel.length + '/' + v.multi.max + ')'; }
+}
+function mgOk() { var v = MG.v; if (v.single) { if (MG.one === null) return; mgAct({ a: v.single.a, i: v.cards[MG.one].i }); } else { if (!MG.sel.length) return; mgAct({ a: v.multi.a, is: MG.sel.map(function (j) { return v.cards[j].i; }) }); } }
+function mgSwipe() {
+  var el = document.getElementById('swp'), x0 = null, dx = 0, L = el.querySelector('.stamp.l'), R = el.querySelector('.stamp.r');
+  el.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; el.style.transition = 'none'; });
+  el.addEventListener('touchmove', function (e) { if (x0 === null) return; dx = e.touches[0].clientX - x0; el.style.transform = 'translateX(' + dx + 'px) rotate(' + dx / 20 + 'deg)'; L.style.opacity = Math.max(0, dx / 100); R.style.opacity = Math.max(0, -dx / 100); });
+  el.addEventListener('touchend', function () { el.style.transition = ''; if (Math.abs(dx) > 90) { el.style.transform = 'translateX(' + (dx > 0 ? 500 : -500) + 'px)'; mgCh(dx > 0 ? 1 : 0); } else { el.style.transform = ''; L.style.opacity = 0; R.style.opacity = 0; } x0 = null; dx = 0; });
+}
+function mgBack() {
+  if (MG.demo) return;
+  liff.sendMessages([{ type: 'text', text: '#mgdone' }]).then(function () { liff.closeWindow(); }).catch(function () { msg('トークにもどって、なにか送ってください。続きが届きます。', 1); });
+}
+
 var TAB = (location.search.match(/[?&]tab=(\w+)/) || [])[1] || 'board', DATA = null;
 var TABS = [['board', '盤面'], ['chron', '年表'], ['love', '恋愛'], ['cv', '履歴書'], ['help', '使い方']];
 function setTab(t) { TAB = t; ARM = ''; show(DATA); window.scrollTo(0, 0); }
@@ -236,7 +329,10 @@ function show(D) {
   render(D);
 }
 
-if (/[?&]demo=1/.test(location.search)) {
+var MGMODE = /[?&]mg=|mg%3D/.test(location.search + location.hash);
+if (/[?&]mgdemo=/.test(location.search)) {
+  MG.demo = 1; fetch((location.search.match(/mgdemo=([\w.]+)/) || [])[1]).then(function (r) { return r.json(); }).then(mgShow);
+} else if (/[?&]demo=1/.test(location.search)) {
   fetch('demo.json').then(function (r) { return r.json(); }).then(show);
 } else {
   liff.init({ liffId: CONF.liffId }).then(function () {
@@ -244,6 +340,7 @@ if (/[?&]demo=1/.test(location.search)) {
     TAB = (location.search.match(/[?&]tab=(\w+)/) || [])[1] || TAB;
     var perm = liff.permission && liff.permission.query ? liff.permission.query('chat_message.write').then(function (p) { CAN_SEND = p && p.state === 'granted' && liff.isInClient(); }).catch(function () { }) : Promise.resolve();
     var tok = liff.getIDToken();
+    if (tok && MGMODE) { MG.tok = tok; return mgPost(null); }
     if (!tok) return msg('本人の確認ができませんでした。<br>LIFF の Scope に openid が入っているか確かめてください。', 1);
     return Promise.all([load(tok), perm]).then(function (r) { show(r[0]); });
   }).catch(function (e) { msg('読みこめませんでした。<br><span class="muted" style="font-size:12px">' + esc(e && (e.code || e.message) || e) + '</span>', 1); });
