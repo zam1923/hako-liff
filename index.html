@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>30年の箱庭 盤面</title>
+<style>
+:root{--bg:#f7e6cf;--card:#fff8ee;--acc:#e8875a;--ink:#5a321b;--sub:#9a6b4c;--good:#3a9d6a;--bad:#c0392b;--track:#efdcc8;--line:#ead3b8}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Noto Sans CJK JP",sans-serif;-webkit-text-size-adjust:100%}
+body{padding:14px 12px calc(28px + env(safe-area-inset-bottom))}
+.head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:4px 4px 12px}
+.head h1{font-size:28px;margin:0;font-weight:900}
+.head .meta{font-size:14px;color:var(--sub);font-weight:700}
+.brand{font-size:11px;color:var(--acc);font-weight:900;letter-spacing:.08em;margin:0 4px 2px}
+.card{background:var(--card);border-radius:18px;padding:16px 16px 14px;margin-bottom:12px;box-shadow:0 1px 0 var(--line)}
+.card h2{font-size:13px;color:var(--acc);margin:0 0 10px;font-weight:900;letter-spacing:.04em}
+.big{font-size:40px;font-weight:900;line-height:1.1}
+.big small{font-size:18px;font-weight:700}
+.delta{font-size:14px;font-weight:800;margin-top:4px}
+.up{color:var(--good)}.down{color:var(--bad)}.muted{color:var(--sub)}
+.row{margin:10px 0 0}
+.row .top{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;font-weight:700}
+.row .top b{font-size:18px;font-weight:900}
+.track{position:relative;height:10px;border-radius:5px;background:var(--track);margin-top:5px;overflow:hidden}
+.track i{position:absolute;left:0;top:0;bottom:0;border-radius:5px}
+.track .mid{position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:#fff8ee;opacity:.9}
+.why{font-size:12px;color:var(--sub);margin-top:4px;display:none;line-height:1.5}
+.row.open .why{display:block}
+.chip{display:inline-block;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--track);margin:0 6px 6px 0}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
+.facts dt{color:var(--sub);font-weight:700}.facts dd{margin:0;font-weight:700}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{position:relative;padding:0 0 14px 18px;border-left:2px solid var(--line);margin-left:6px}
+.tl li:last-child{border-left-color:transparent;padding-bottom:0}
+.tl li:before{content:"";position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:6px;background:var(--acc)}
+.tl .age{font-size:12px;color:var(--sub);font-weight:800}
+.tl .t{font-size:13px;color:var(--acc);font-weight:900;margin-left:6px}
+.tl .br{font-size:16px;font-weight:900;margin-top:2px}
+.tl .alt,.tl .mot{font-size:12px;color:var(--sub);margin-top:2px}
+.stars{color:var(--acc);font-size:12px;letter-spacing:1px}
+.chron{list-style:none;margin:0;padding:0;font-size:13px}
+.chron li{display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--line)}
+.chron li:first-child{border-top:0}
+.chron .a{color:var(--sub);font-weight:800;white-space:nowrap;min-width:5.5em}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:900;background:var(--acc);color:#fffaf3;margin-top:6px}
+.msg{padding:40px 16px;text-align:center;font-size:15px;line-height:1.8}
+.spin{width:34px;height:34px;border-radius:50%;border:4px solid var(--track);border-top-color:var(--acc);margin:0 auto 14px;animation:r 1s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+svg text{font-family:inherit}
+</style>
+</head>
+<body>
+<div id="app"><div class="msg"><div class="spin"></div>盤面を読みこんでいます</div></div>
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+// ここだけ書きかえる: LIFF ID と、箱庭の GAS ウェブアプリの URL(末尾 /exec)
+var CONF = { liffId: '__LIFF_ID__', api: 'https://script.google.com/macros/s/AKfycbygfzG8XxYQOeRwZZOzp-mFdGKunDI-EguEC9IlOuejC7yywVJODX8Jqj84nfqELBVHmw/exec' };
+
+var $app = document.getElementById('app');
+function esc(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function msg(t, btn) { $app.innerHTML = '<div class="msg">' + t + '</div>' + (btn ? '<button class="btn" onclick="closeApp()">LINE にもどる</button>' : ''); }
+function closeApp() { try { if (window.liff && liff.isInClient()) return liff.closeWindow(); } catch (e) { } history.back(); }
+function stars(n) { var s = ''; for (var i = 1; i <= 5; i++) s += i <= n ? '★' : '☆'; return s; }
+
+function incomeChart(h) {
+  if (!h || h.length < 2) return '';
+  var W = 320, H = 120, L = 34, R = 10, T = 12, B = 22;
+  var xs = h.map(function (p) { return p[0]; }), ys = h.map(function (p) { return p[1]; });
+  var x0 = 0, x1 = Math.max(1, Math.max.apply(null, xs)), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+  var pad = Math.max(10, (y1 - y0) * 0.25); y0 = Math.floor((y0 - pad) / 10) * 10; y1 = Math.ceil((y1 + pad) / 10) * 10;
+  var X = function (v) { return L + (v - x0) / (x1 - x0) * (W - L - R); }, Y = function (v) { return T + (1 - (v - y0) / (y1 - y0)) * (H - T - B); };
+  var d = h.map(function (p, i) { return (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); }).join(' ');
+  var area = d + ' L' + X(xs[xs.length - 1]).toFixed(1) + ' ' + (H - B) + ' L' + X(xs[0]).toFixed(1) + ' ' + (H - B) + 'Z';
+  var last = h[h.length - 1], g = '';
+  [y0, y1].forEach(function (v) { g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="#ead3b8"/><text x="' + (L - 4) + '" y="' + (Y(v) + 4) + '" font-size="10" fill="#9a6b4c" text-anchor="end">' + v + '</text>'; });
+  g += '<text x="' + L + '" y="' + (H - 6) + '" font-size="10" fill="#9a6b4c">0歳</text><text x="' + (W - R) + '" y="' + (H - 6) + '" font-size="10" fill="#9a6b4c" text-anchor="end">' + Math.floor(x1) + '歳</text>';
+  var dots = h.slice(1).map(function (p) { return '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Y(p[1]).toFixed(1) + '" r="2.6" fill="#e8875a"/>'; }).join('');
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="display:block;margin-top:10px">' + g + '<path d="' + area + '" fill="#e8875a" opacity=".12"/><path d="' + d + '" fill="none" stroke="#e8875a" stroke-width="2.5" stroke-linejoin="round"/>' + dots + '<circle cx="' + X(last[0]) + '" cy="' + Y(last[1]) + '" r="4.5" fill="#e8875a" stroke="#fff8ee" stroke-width="2"/></svg>';
+}
+
+function render(D) {
+  var h = '';
+  h += '<div class="brand">確率AI「30年の箱庭」</div>';
+  h += '<div class="head"><h1>' + esc(D.name) + '</h1><span class="meta">' + esc(D.age) + (D.grade ? '・' + esc(D.grade) : '') + '・' + esc(D.year) + '年</span></div>';
+  // 30歳の年収の見込み
+  var dl = D.ei - D.ei0;
+  h += '<div class="card"><h2>30歳の年収の見込み(Jev の読みから計算)</h2>';
+  h += '<div class="big">' + (D.ei ? '約' + D.ei + '<small>万円</small>' : '—') + '</div>';
+  if (D.ei && D.ei0) h += '<div class="delta ' + (dl >= 0 ? 'up' : 'down') + '">生まれたときの見込みから ' + (dl >= 0 ? '+' : '−') + Math.abs(dl) + '万円</div>';
+  h += incomeChart(D.eiH) + '</div>';
+  // 能力
+  h += '<div class="card"><h2>' + esc(D.stage) + 'の能力(同い年の中での偏差値・押すと理由)</h2>';
+  D.items.forEach(function (x) {
+    var t = Math.max(20, Math.min(80, x.t)), w = (t - 20) / 60 * 100, col = x.t >= 60 ? 'var(--acc)' : x.t <= 40 ? 'var(--bad)' : '#c9ab8f';
+    h += '<div class="row" onclick="this.classList.toggle(\'open\')"><div class="top"><span>' + esc(x.n) + (x.sub ? ' <span class="muted" style="font-size:12px">' + esc(x.sub) + '</span>' : '') + '</span><b style="color:' + col + '">' + x.t + '</b></div><div class="track"><i style="width:' + w.toFixed(1) + '%;background:' + col + '"></i><span class="mid"></span></div>' + (x.why ? '<div class="why">' + esc(x.why) + '</div>' : '') + '</div>';
+  });
+  h += '</div>';
+  // たまっているもの
+  h += '<div class="card"><h2>たまっているもの</h2>';
+  if (!D.gauges.length) h += '<div class="muted" style="font-size:14px">いまは、たまっているものはありません</div>';
+  D.gauges.forEach(function (x) {
+    var col = x.good ? 'var(--good)' : 'var(--bad)';
+    var eta = x.on ? '発動中' : x.eta === -1 ? 'このままなら起きない' : x.eta ? '発動まで約' + (x.eta < 1 ? Math.max(1, Math.round(x.eta * 12)) + 'か月' : x.eta + '年') : '';
+    h += '<div class="row"><div class="top"><span>' + esc(x.n) + '</span><b style="color:' + col + '">' + (x.on ? '●' : Math.round(x.g * 100) + '%') + '</b></div><div class="track"><i style="width:' + Math.round((x.on ? 1 : x.g) * 100) + '%;background:' + col + '"></i></div>' + (eta ? '<div class="why" style="display:block">' + eta + '</div>' : '') + '</div>';
+  });
+  h += '</div>';
+  // 家と学校
+  var F = D.fam;
+  h += '<div class="card"><h2>家と学校</h2><dl class="facts"><dt>世帯年収</dt><dd>' + esc(F.inc) + '</dd><dt>家の貯金</dt><dd>' + esc(F.save) + '</dd><dt>学校</dt><dd>' + esc(F.school) + '</dd><dt>ルート</dt><dd>' + esc(F.route) + '</dd><dt>友だち</dt><dd>' + esc(F.friends) + '</dd><dt>体</dt><dd>' + esc(F.health) + '・ストレス ' + esc(F.stress) + '</dd></dl></div>';
+  // 分岐点の記録
+  h += '<div class="card"><h2>分岐点の記録(新しい順)</h2>';
+  if (!D.log.length) h += '<div class="muted" style="font-size:14px">まだ分岐点はありません</div>';
+  else h += '<ul class="tl">' + D.log.map(function (x) {
+    return '<li><span class="age">' + x.a.toFixed(1) + '歳</span><span class="t">' + esc(x.t) + '</span><div class="br">' + esc(x.br) + '</div>' +
+      (x.mot ? '<div class="mot">理由: ' + esc(x.mot) + '</div>' : '') +
+      (x.conv ? '<div class="mot"><span class="stars">' + stars(x.conv) + '</span> ' + esc(x.dec || '') + '</div>' : '') +
+      (x.alt ? '<div class="alt">ほかの読み: ' + esc(x.alt) + '</div>' : '') + '</li>';
+  }).join('') + '</ul>';
+  h += '</div>';
+  // 年表
+  if (D.chron.length) h += '<div class="card"><h2>最近の出来事</h2><ul class="chron">' + D.chron.map(function (x) { return '<li><span class="a">' + esc(x.a) + '</span><span>' + esc(x.t) + '</span></li>'; }).join('') + '</ul></div>';
+  h += '<button class="btn" onclick="closeApp()">LINE にもどる</button>';
+  $app.innerHTML = h;
+}
+
+function load(token) {
+  return fetch(CONF.api + '?api=dash', { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idToken: token }) })
+    .then(function (r) { return r.json(); });
+}
+function show(D) {
+  if (D.err === 'auth') return msg('本人の確認ができませんでした。<br>いったん閉じて、メニューから開きなおしてください。', 1);
+  if (D.err) return msg('いまは盤面を出せません(' + esc(D.err) + ')。<br>少し待ってから開きなおしてください。', 1);
+  if (D.none) return msg('まだ人生が始まっていません。<br>トークで「最初から」と送ると始まります。', 1);
+  render(D);
+}
+
+if (/[?&]demo=1/.test(location.search)) {
+  fetch('demo.json').then(function (r) { return r.json(); }).then(show);
+} else {
+  liff.init({ liffId: CONF.liffId }).then(function () {
+    if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+    var tok = liff.getIDToken();
+    if (!tok) return msg('本人の確認ができませんでした。<br>LIFF の Scope に openid が入っているか確かめてください。', 1);
+    return load(tok).then(show);
+  }).catch(function (e) { msg('読みこめませんでした。<br><span class="muted" style="font-size:12px">' + esc(e && (e.code || e.message) || e) + '</span>', 1); });
+}
+</script>
+</body>
+</html>
