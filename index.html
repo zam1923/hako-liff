@@ -48,6 +48,16 @@ body{padding:14px 12px calc(28px + env(safe-area-inset-bottom));max-width:560px;
 .spin{width:34px;height:34px;border-radius:50%;border:4px solid var(--track);border-top-color:var(--acc);margin:0 auto 14px;animation:r 1s linear infinite}
 @keyframes r{to{transform:rotate(360deg)}}
 svg text{font-family:inherit}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;background:var(--bg);padding:8px 0 10px;margin:0 0 4px}
+.tabs button{flex:1;border:0;border-radius:999px;padding:9px 0;font-size:14px;font-weight:900;background:var(--card);color:var(--sub);font-family:inherit}
+.tabs button.on{background:var(--acc);color:#fffaf3}
+.rows{list-style:none;margin:0;padding:0;font-size:14px}
+.rows li{padding:7px 0;border-top:1px solid var(--line);line-height:1.5}
+.rows li:first-child{border-top:0}
+.rows .n{font-weight:800}.rows .s{font-size:12px;color:var(--sub)}
+.help p{font-size:14px;line-height:1.75;margin:0 0 10px}
+.btn2{display:block;width:100%;border:2px solid var(--acc);border-radius:14px;padding:12px;font-size:15px;font-weight:900;background:transparent;color:var(--acc);margin-top:8px;font-family:inherit}
+.btn2.warn{background:var(--acc);color:#fffaf3}
 </style>
 </head>
 <body>
@@ -79,10 +89,8 @@ function incomeChart(h) {
   return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="display:block;margin-top:10px">' + g + '<path d="' + area + '" fill="#e8875a" opacity=".12"/><path d="' + d + '" fill="none" stroke="#e8875a" stroke-width="2.5" stroke-linejoin="round"/>' + dots + '<circle cx="' + X(last[0]) + '" cy="' + Y(last[1]) + '" r="4.5" fill="#e8875a" stroke="#fff8ee" stroke-width="2"/></svg>';
 }
 
-function render(D) {
+function board(D) {
   var h = '';
-  h += '<div class="brand">確率AI「30年の箱庭」</div>';
-  h += '<div class="head"><h1>' + esc(D.name) + '</h1><span class="meta">' + esc(D.age) + (D.grade ? '・' + esc(D.grade) : '') + '・' + esc(D.year) + '年</span></div>';
   // 30歳の年収の見込み
   var dl = D.ei - D.ei0;
   h += '<div class="card"><h2>30歳の年収の見込み(Jev の読みから計算)</h2>';
@@ -118,8 +126,63 @@ function render(D) {
       (x.alt ? '<div class="alt">ほかの読み: ' + esc(x.alt) + '</div>' : '') + '</li>';
   }).join('') + '</ul>';
   h += '</div>';
-  // 年表
-  if (D.chron.length) h += '<div class="card"><h2>最近の出来事</h2><ul class="chron">' + D.chron.map(function (x) { return '<li><span class="a">' + esc(x.a) + '</span><span>' + esc(x.t) + '</span></li>'; }).join('') + '</ul></div>';
+  // 家の方針(見るだけ)
+  if (D.pol && D.pol.length) h += '<div class="card"><h2>家の方針(Jev の読み・見るだけ)</h2><ul class="rows">' + D.pol.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul><div class="why" style="display:block;margin-top:8px">方針は、分岐点での答えから少しずつ変わります。小学校に上がる前など、節目で見直すかを聞きます。</div></div>';
+  return h;
+}
+function chronTab(D) {
+  var P = D.pf || {}, h = '';
+  if (P.years && P.years.length) h += '<div class="card"><h2>1年ごとのまとめ</h2><ul class="chron">' + P.years.slice().reverse().map(function (y) { return '<li><span class="a">' + esc(y.a) + (y.g ? '<br><span style="font-weight:600">' + esc(y.g) + '</span>' : '') + '</span><span>' + esc(y.t) + '</span></li>'; }).join('') + '</ul></div>';
+  h += '<div class="card"><h2>出来事(新しい順)</h2>' + (D.chron.length ? '<ul class="chron">' + D.chron.map(function (x) { return '<li><span class="a">' + esc(x.a) + '</span><span>' + esc(x.t) + '</span></li>'; }).join('') + '</ul>' : '<div class="muted" style="font-size:14px">まだありません</div>') + '</div>';
+  return h;
+}
+function cvTab(D) {
+  var P = D.pf || {}, H = P.head || {}, C = P.cv || {}, h = '';
+  h += '<div class="card"><h2>基本</h2><dl class="facts"><dt>生まれ</dt><dd>' + esc(H.born) + '・' + esc(H.sex) + '</dd><dt>育ち</dt><dd>' + esc(H.place) + '</dd><dt>家族</dt><dd>' + esc(H.fam) + '</dd><dt>いま</dt><dd>' + esc(H.now) + '</dd></dl></div>';
+  var row = function (r) { return '<li><span class="n">' + r[0] + '年' + (r[1] ? r[1] + '月' : '') + '</span> ' + esc(r[2]) + (r[3] ? '<div class="s">' + esc(r[3]) + '</div>' : '') + '</li>'; };
+  h += '<div class="card"><h2>学歴</h2><ul class="rows">' + (C.edu || []).map(row).join('') + '</ul></div>';
+  if ((C.work || []).length) h += '<div class="card"><h2>職歴</h2><ul class="rows">' + C.work.map(row).join('') + '</ul></div>';
+  if ((C.qual || []).length) h += '<div class="card"><h2>資格</h2><ul class="rows">' + C.qual.map(function (q) { return '<li>' + esc(Array.isArray(q) ? q.join(' ') : q) + '</li>'; }).join('') + '</ul></div>';
+  if ((C.club || []).length || C.gaku) h += '<div class="card"><h2>部活・学生時代に力を入れたこと</h2><ul class="rows">' + (C.club || []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + (C.gaku ? '<li><span class="n">ガクチカ ' + C.gaku.t + '</span><div class="s">' + esc((C.gaku.items || []).join('・')) + '</div></li>' : '') + '</ul></div>';
+  h += '<div class="card"><h2>能力</h2><ul class="rows">' + (P.skills || []).map(function (x) { return '<li><span class="n">' + esc(x.n) + '</span> ' + esc(x.w) + '<span class="s">・' + esc(x.tr) + '</span></li>'; }).join('') + '</ul>' + (P.strong ? '<div class="why" style="display:block;margin-top:8px">強み: ' + esc(P.strong.join('・')) + ' / 弱み: ' + esc((P.weakSk || []).join('・')) + '</div>' : '') + '</div>';
+  var envL = function (a) { return a.map(function (m) { return '<li><span class="n">' + esc(m.n) + '</span>「' + esc(m.t) + '」<div class="s">← ' + esc(m.cause) + '</div></li>'; }).join(''); };
+  if ((P.made || []).length) h += '<div class="card"><h2>この子をつくった環境</h2><ul class="rows">' + envL(P.made) + '</ul></div>';
+  if ((P.weak || []).length) h += '<div class="card"><h2>足を引っぱった環境</h2><ul class="rows">' + envL(P.weak) + '</ul></div>';
+  if ((P.routes || []).length) h += '<div class="card"><h2>たどったルート</h2><ul class="rows">' + P.routes.map(function (r) { return '<li><span class="n">' + esc(r.a) + '</span> ' + esc(r.n) + '</li>'; }).join('') + '</ul></div>';
+  if (P.parent) h += '<div class="card"><h2>親としてのあなた</h2><dl class="facts"><dt>答えた分岐点</dt><dd>' + esc(P.parent.answers) + '</dd><dt>温かさ</dt><dd>' + esc(P.parent.warmth) + '</dd><dt>自律の尊重</dt><dd>' + esc(P.parent.autonomy) + '</dd><dt>一貫性</dt><dd>' + esc(P.parent.consist) + '</dd><dt>きつさ</dt><dd>' + esc(P.parent.harsh) + '</dd></dl></div>';
+  return h;
+}
+var CAN_SEND = false, ARM = '';
+function helpTab(D) {
+  var h = '<div class="card help"><h2>あそびかた</h2>';
+  h += '<p>あなたは親として、そして中学からは本人として、ひとりの30年を生きます。家庭はくじ引きです。</p>';
+  h += '<p>トークに届く<b>分岐点</b>に、どうするか・なぜそうするかを自由に書いて送ってください。選択肢はありません。Jev が答えを読みとって、選んだ道と理由、本気度を決めます。答えが薄いときは、もう一歩だけ聞き返します。</p>';
+  h += '<p>小学校まではあなたが親として答えます。中学からは本人として答え、親が決めることだけ「(親として)」と書いて聞きます。</p>';
+  h += '<p>受験や進学先など、決まった選択肢から選ぶ場面では、カードのボタンを押してください。</p>';
+  h += '<p>30歳になったら終わりです。そのときの年収と、そこに効いたことがわかります。</p></div>';
+  h += '<div class="card help"><h2>この画面</h2><p><b>盤面</b>… 30歳の年収の見込み、能力、たまっているもの、分岐点の記録、家の方針<br><b>年表</b>… 1年ごとのまとめと、出来事<br><b>履歴書</b>… 学歴・職歴・能力と、それをつくった環境</p></div>';
+  h += '<div class="card help"><h2>始めなおす</h2>';
+  if (CAN_SEND) {
+    [['続きから', 0], ['誕生から', 1], ['中学生から', 1], ['高校生から', 1], ['大学生から', 1]].forEach(function (x) {
+      h += '<button class="btn2' + (ARM === x[0] ? ' warn' : '') + '" onclick="startCmd(\'' + x[0] + '\',' + x[1] + ')">' + (ARM === x[0] ? 'もう一度押すと、いまの人生を終えて' + x[0] + '始めます' : x[0]) + '</button>';
+    });
+  } else h += '<p>トークで「誕生から」「中学生から」「高校生から」「大学生から」と送ると、新しい家庭で始めなおせます(いまの人生は終わります)。「続きから」で再開します。</p>';
+  h += '</div>';
+  return h;
+}
+function startCmd(t, risky) {
+  if (risky && ARM !== t) { ARM = t; show(DATA); return; }
+  liff.sendMessages([{ type: 'text', text: t }]).then(function () { liff.closeWindow(); }).catch(function (e) { ARM = ''; alertBox('送れませんでした: ' + (e && e.message || e)); });
+}
+function alertBox(t) { var d = document.createElement('div'); d.className = 'msg'; d.textContent = t; $app.appendChild(d); }
+var TAB = (location.search.match(/[?&]tab=(\w+)/) || [])[1] || 'board', DATA = null;
+var TABS = [['board', '盤面'], ['chron', '年表'], ['cv', '履歴書'], ['help', '使い方']];
+function setTab(t) { TAB = t; ARM = ''; show(DATA); window.scrollTo(0, 0); }
+function render(D) {
+  var h = '<div class="brand">確率AI「30年の箱庭」</div>';
+  h += '<div class="head"><h1>' + esc(D.name) + '</h1><span class="meta">' + esc(D.age) + (D.grade ? '・' + esc(D.grade) : '') + '・' + esc(D.year) + '年</span></div>';
+  h += '<div class="tabs">' + TABS.map(function (t) { return '<button class="' + (TAB === t[0] ? 'on' : '') + '" onclick="setTab(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('') + '</div>';
+  h += TAB === 'chron' ? chronTab(D) : TAB === 'cv' ? cvTab(D) : TAB === 'help' ? helpTab(D) : board(D);
   h += '<button class="btn" onclick="closeApp()">LINE にもどる</button>';
   $app.innerHTML = h;
 }
@@ -131,7 +194,8 @@ function load(token) {
 function show(D) {
   if (D.err === 'auth') return msg('本人の確認ができませんでした。<br>いったん閉じて、メニューから開きなおしてください。', 1);
   if (D.err) return msg('いまは盤面を出せません(' + esc(D.err) + ')。<br>少し待ってから開きなおしてください。', 1);
-  if (D.none) return msg('まだ人生が始まっていません。<br>トークで「最初から」と送ると始まります。', 1);
+  DATA = D;
+  if (D.none) { if (TAB === 'help') { $app.innerHTML = '<div class="brand">確率AI「30年の箱庭」</div>' + helpTab(D) + '<button class="btn" onclick="closeApp()">LINE にもどる</button>'; return; } return msg('まだ人生が始まっていません。<br>トークで「誕生から」などと送ると始まります。', 1); }
   render(D);
 }
 
@@ -140,9 +204,11 @@ if (/[?&]demo=1/.test(location.search)) {
 } else {
   liff.init({ liffId: CONF.liffId }).then(function () {
     if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+    TAB = (location.search.match(/[?&]tab=(\w+)/) || [])[1] || TAB;
+    var perm = liff.permission && liff.permission.query ? liff.permission.query('chat_message.write').then(function (p) { CAN_SEND = p && p.state === 'granted' && liff.isInClient(); }).catch(function () { }) : Promise.resolve();
     var tok = liff.getIDToken();
     if (!tok) return msg('本人の確認ができませんでした。<br>LIFF の Scope に openid が入っているか確かめてください。', 1);
-    return load(tok).then(show);
+    return Promise.all([load(tok), perm]).then(function (r) { show(r[0]); });
   }).catch(function (e) { msg('読みこめませんでした。<br><span class="muted" style="font-size:12px">' + esc(e && (e.code || e.message) || e) + '</span>', 1); });
 }
 </script>
