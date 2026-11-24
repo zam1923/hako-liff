@@ -91,6 +91,18 @@ function incomeChart(h) {
 
 function board(D) {
   var h = '';
+  // 本人の収入(0歳から通して)。働く前はお小遣い・バイト、働いてからは額面・手取りの月収と年収
+  var M = D.money || {};
+  h += '<div class="card"><h2>' + esc(D.name) + 'の収入</h2>';
+  if (M.work) {
+    h += '<div class="big">月' + M.gm + '<small>万円(額面)</small></div>';
+    h += '<div class="delta">手取り 月' + M.nm + '万円・年収 ' + M.gy + '万円(手取り ' + M.ny + '万円)</div><div class="why" style="display:block;margin-top:4px">' + esc(M.emp) + '</div>';
+  } else {
+    h += '<div class="big">月' + (M.m || 0) + '<small>万円</small></div><div class="delta">1年で ' + (M.y || 0) + '万円</div>';
+    h += '<div class="delta muted">' + (M.job ? '求職中' : (M.baito ? 'お小遣いとバイト' : (M.m ? 'お小遣い' : 'まだ収入はありません'))) + '</div>';
+    if (M.par) h += '<div class="why" style="display:block;margin-top:6px">家の世帯年収(親): ' + M.par + '万円</div>';
+  }
+  h += '</div>';
   if (D.tri) {   // 富・名声・力(いまの位置)
     h += '<div class="card"><h2>富・名声・力(同い年100人のなかで・いまの位置)</h2>';
     [['富', D.tri.wealth], ['名声', D.tri.fame], ['力', D.tri.power]].forEach(function (x) {
@@ -103,7 +115,7 @@ function board(D) {
   // 30歳の年収の見込み
   var dl = D.ei - D.ei0;
   h += '<div class="card"><h2>30歳の年収の見込み(Jev の読みから計算)</h2>';
-  h += '<div class="big">' + (D.ei ? '約' + D.ei + '<small>万円</small>' : '—') + '</div>';
+  h += '<div style="font-size:26px;font-weight:900">' + (D.ei ? '約' + D.ei + '万円' : '—') + '</div>';
   if (D.ei && D.ei0) h += '<div class="delta ' + (dl >= 0 ? 'up' : 'down') + '">生まれたときの見込みから ' + (dl >= 0 ? '+' : '−') + Math.abs(dl) + '万円</div>';
   h += incomeChart(D.eiH) + '</div>';
   // 能力
@@ -124,7 +136,7 @@ function board(D) {
   h += '</div>';
   // 家と学校
   var F = D.fam;
-  h += '<div class="card"><h2>家と学校</h2><dl class="facts"><dt>世帯年収</dt><dd>' + esc(F.inc) + '</dd><dt>家の貯金</dt><dd>' + esc(F.save) + '</dd><dt>学校</dt><dd>' + esc(F.school) + '</dd><dt>ルート</dt><dd>' + esc(F.route) + '</dd><dt>友だち</dt><dd>' + esc(F.friends) + '</dd><dt>体</dt><dd>' + esc(F.health) + '・ストレス ' + esc(F.stress) + '</dd></dl></div>';
+  h += '<div class="card"><h2>家と学校</h2><dl class="facts">' + (M.work ? '' : '<dt>世帯年収(親)</dt><dd>' + esc(F.inc) + '</dd><dt>家の貯金</dt><dd>' + esc(F.save) + '</dd>') + '<dt>学校</dt><dd>' + esc(F.school) + '</dd><dt>ルート</dt><dd>' + esc(F.route) + '</dd><dt>友だち</dt><dd>' + esc(F.friends) + '</dd><dt>体</dt><dd>' + esc(F.health) + '・ストレス ' + esc(F.stress) + '</dd></dl></div>';
   // 分岐点の記録
   h += '<div class="card"><h2>分岐点の記録(新しい順)</h2>';
   if (!D.log.length) h += '<div class="muted" style="font-size:14px">まだ分岐点はありません</div>';
