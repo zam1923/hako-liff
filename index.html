@@ -91,6 +91,15 @@ function incomeChart(h) {
 
 function board(D) {
   var h = '';
+  if (D.tri) {   // 富・名声・力(いまの位置)
+    h += '<div class="card"><h2>富・名声・力(同い年100人のなかで・いまの位置)</h2>';
+    [['富', D.tri.wealth], ['名声', D.tri.fame], ['力', D.tri.power]].forEach(function (x) {
+      var r = x[1].r, w = r === null ? 0 : Math.round((100 - r) / 99 * 100);
+      h += '<div class="row"><div class="top"><span>' + x[0] + ' <span class="muted" style="font-size:12px">' + esc(x[1].word) + '</span></span><b style="color:var(--acc)">' + (r === null ? '—' : '上から' + r + '番目') + '</b></div><div class="track"><i style="width:' + w + '%;background:var(--acc)"></i></div></div>';
+    });
+    if (D.jt) h += '<div class="why" style="display:block;margin-top:8px">仕事の型: ' + esc(D.jt) + (D.emp ? '(' + esc(D.emp) + ')' : '') + '</div>';
+    h += '</div>';
+  }
   // 30歳の年収の見込み
   var dl = D.ei - D.ei0;
   h += '<div class="card"><h2>30歳の年収の見込み(Jev の読みから計算)</h2>';
